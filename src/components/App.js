@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { database } from '../firebase';
+import { connect } from 'react-redux';
+import { getNotes, saveNote } from '../actions/notes-actions'
+
 class App extends Component {
   constructor(props) {
     super(props); 
@@ -21,16 +24,16 @@ class App extends Component {
         title: this.state.title,
         content: this.state.content,
       }
-      database.push(note);
+      this.props.saveNote(); 
+      this.setState({
+        title: '',
+        content: '',
+      })
     }
   }
 
   componentDidMount = () => {
-    database.on('value', (snapshot => {
-      this.setState({
-        notes: snapshot.val()        
-      })
-    }))
+    this.props.getNotes()
   }
   render() {
     const { notes } = this.state;
@@ -128,4 +131,8 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = (state, ownProps) => {
+  return state.notes
+}
+
+export default connect(mapStateToProps, { getNotes, saveNote })(App);
