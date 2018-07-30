@@ -19,12 +19,13 @@ class App extends Component {
     }
 
     this.handleSubmit = (e) => {
+      const {title, content} = this.state
       e.preventDefault();
       const note = {
         title: this.state.title,
         content: this.state.content,
       }
-      this.props.saveNote(); 
+      this.props.saveNote(note); 
       this.setState({
         title: '',
         content: '',
@@ -34,11 +35,15 @@ class App extends Component {
 
   componentDidMount = () => {
     this.props.getNotes()
+    this.setState({
+      notes: this.props.getNotes,
+    })
   }
   render() {
-    const { notes } = this.state;
-    console.log(typeof(notes));
-    const data = Object.keys(notes).map(key => notes[key]);
+    const { notes } = this.props;
+    console.log(notes);
+    
+    //const data = Object.keys(notes).map(key => notes[key]);
     //console.log(data.map(note => note.title));
     
     return (
@@ -68,7 +73,7 @@ class App extends Component {
             <button
               onClick={this.handleSubmit} >Save</button>
             </div>
-            {data.map((note, index) => (
+            {notes.map((note, index) => (
               <div 
                 className="post"
                 key={index}>
@@ -132,7 +137,11 @@ class App extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  return state.notes
+  console.log('this is stateeeee', state);
+  const { notes } = state.notes;
+  return {
+    notes,
+  }
 }
 
 export default connect(mapStateToProps, { getNotes, saveNote })(App);

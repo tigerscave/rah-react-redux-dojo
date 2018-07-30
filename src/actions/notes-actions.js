@@ -5,9 +5,11 @@ import { database } from '../firebase';
 export function getNotes() {
   return dispatch => {
     database.on('value', snapshot => {
+      const data = snapshot.val()
+      const notes = Object.keys(data).map(key => data[key])
       dispatch({
         type: GET_NOTES, 
-        playload: snapshot.val(),
+        payload: notes,
       })
     })
   }
